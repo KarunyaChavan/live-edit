@@ -1,0 +1,28 @@
+{
+  "name": "karunyachavan/live-edit",
+  "description": "Live Edit - A modern frontend inline content editing experience for WordPress Gutenberg blocks.",
+  "type": "wordpress-plugin",
+  "keywords": [
+    "wordpress",
+    "gutenberg",
+    "inline-editing",
+    "frontend-editor",
+    "live-edit"
+  ],
+  "require-dev": {
+      "wp-coding-standards/wpcs": "^2.3",
+      "phpcompatibility/phpcompatibility-wp": "^2.1",
+      "phpunit/phpunit": "^9.6",
+      "wp-phpunit/wp-phpunit": "^6.9",
+      "yoast/phpunit-polyfills": "^4.0",
+      "wp-cli/i18n-command": "^2.6"
+  },
+  "config": {
+      "allow-plugins": {
+          "dealerdirect/phpcodesniffer-composer-installer": true
+      }
+  },
+  "scripts": {
+    "pot": "wp i18n make-pot . ./languages/live-edit.pot --domain=live-edit --include=\"inc,templates,assets/js,assets/build/blocks\""
+  }
+}

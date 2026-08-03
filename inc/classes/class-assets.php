@@ -1,0 +1,99 @@
+<?php
+/**
+ * Assets class.
+ *
+ * @package live-edit
+ */
+
+namespace Live_Edit\Inc;
+
+use Live_Edit\Inc\Traits\Singleton;
+
+// Exit if accessed directly.
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Class Assets
+ */
+class Assets {
+
+	use Singleton;
+
+	/**
+	 * Construct method.
+	 */
+	protected function __construct() {
+		$this->setup_hooks();
+	}
+
+	/**
+	 * To setup action/filter.
+	 *
+	 * @return void
+	 */
+	protected function setup_hooks() {
+
+		/**
+		 * Action
+		 */
+		add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'admin_enqueue_scripts' ] );
+
+	}
+
+	/**
+	 * To enqueue scripts and styles.
+	 *
+	 * @return void
+	 */
+	public function enqueue_scripts() {
+
+		wp_register_script(
+			'live-edit-script',
+			LIVE_EDIT_URL . '/assets/build/js/main.js',
+			[],
+			file_exists( LIVE_EDIT_PATH . '/assets/build/js/main.js' ) ? filemtime( LIVE_EDIT_PATH . '/assets/build/js/main.js' ) : '1.0',
+			true
+		);
+
+		wp_register_style(
+			'live-edit-style',
+			LIVE_EDIT_URL . '/assets/build/css/main.css',
+			[],
+			file_exists( LIVE_EDIT_PATH . '/assets/build/css/main.css' ) ? filemtime( LIVE_EDIT_PATH . '/assets/build/css/main.css' ) : '1.0'
+		);
+
+		wp_enqueue_script( 'live-edit-script' );
+		wp_enqueue_style( 'live-edit-style' );
+
+	}
+
+	/**
+	 * To enqueue scripts and styles in admin.
+	 *
+	 * @param string $hook_suffix Admin page name.
+	 *
+	 * @return void
+	 */
+	public function admin_enqueue_scripts( $hook_suffix ) {
+
+		wp_register_script(
+			'live-edit-admin-script',
+			LIVE_EDIT_URL . '/assets/build/js/admin.js',
+			[],
+			file_exists( LIVE_EDIT_PATH . '/assets/build/js/admin.js' ) ? filemtime( LIVE_EDIT_PATH . '/assets/build/js/admin.js' ) : '1.0',
+			true
+		);
+
+		wp_register_style(
+			'live-edit-admin-style',
+			LIVE_EDIT_URL . '/assets/build/css/admin.css',
+			[],
+			file_exists( LIVE_EDIT_PATH . '/assets/build/css/admin.css' ) ? filemtime( LIVE_EDIT_PATH . '/assets/build/css/admin.css' ) : '1.0'
+		);
+
+		wp_enqueue_script( 'live-edit-admin-script' );
+		wp_enqueue_style( 'live-edit-admin-style' );
+
+	}
+}

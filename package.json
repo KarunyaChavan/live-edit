@@ -1,0 +1,51 @@
+{
+  "name": "live-edit",
+  "version": "1.0.0",
+  "description": "Live Edit - Edit what you see, where you see it. A modern frontend inline content editing experience for WordPress Gutenberg blocks.",
+  "private": true,
+  "author": "Karunya Chavan",
+  "license": "GPL-2.0-or-later",
+  "keywords": [
+    "wordpress",
+    "gutenberg",
+    "inline-editing",
+    "frontend-editor",
+    "live-edit"
+  ],
+  "homepage": "https://github.com/KarunyaChavan/live-edit#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KarunyaChavan/live-edit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/KarunyaChavan/live-edit/issues"
+  },
+  "devDependencies": {
+    "@babel/core": "7.29.6",
+    "@wordpress/babel-preset-default": "8.37.0",
+    "@wordpress/browserslist-config": "6.33.0",
+    "@wordpress/env": "10.30.0",
+    "@wordpress/eslint-plugin": "23.0.0",
+    "@wordpress/scripts": "31.6.0",
+    "browserslist": "4.27.0",
+    "cross-env": "10.1.0",
+    "css-minimizer-webpack-plugin": "7.0.2",
+    "eslint": "8.40.0",
+    "eslint-plugin-eslint-comments": "3.2.0",
+    "eslint-plugin-import": "2.32.0",
+    "npm-run-all": "4.1.5",
+    "webpack-remove-empty-scripts": "1.1.1"
+  },
+  "scripts": {
+    "build:js": "wp-scripts build --config ./webpack.config.js",
+    "start:js": "wp-scripts start --config ./webpack.config.js",
+    "build": "npm run build:js",
+    "start": "npm run start:js",
+    "lint": "npm-run-all --parallel lint:*",
+    "lint:css": "wp-scripts lint-style ./assets/src",
+    "lint:css:fix": "npm run lint:css -- --fix ./assets/src",
+    "lint:js": "wp-scripts lint-js ./assets/src",
+    "lint:js:fix": "npm run lint:js -- --fix ./assets/src",
+    "wp-env": "wp-env"
+  }
+}

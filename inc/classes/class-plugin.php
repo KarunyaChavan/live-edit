@@ -28,6 +28,8 @@ class Plugin {
 		Assets::get_instance();
 		Rewrite::get_instance();
 		SEO::get_instance();
+		Admin_Bar::get_instance();
+		Rest_API::get_instance();
 
 	}
 }

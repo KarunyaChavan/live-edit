@@ -1,0 +1,37 @@
+/**
+ * SCSS Variables for Live Edit
+ *
+ * @package live-edit
+ */
+
+/*
+ * Colors
+ */
+$wp-blue: #2271b1;
+$wp-green: #46b450;
+$wp-grey: #787c82;
+$white: #fff;
+
+/*
+ * Toggle Switch Colors
+ */
+$switch-bg: $wp-grey;
+$switch-active-bg: $wp-green;
+
+/*
+ * Live Edit Block Highlight Colors
+ */
+$block-outline-color: rgba($wp-blue, 0.3);
+$block-hover-outline-color: rgba($wp-blue, 0.7);
+$block-active-outline-color: $wp-blue;
+$block-bg-highlight: rgba($wp-blue, 0.05);
+
+/*
+ * Dimensions & Spacing
+ */
+$toggle-width: 2.25rem; // 36px
+$toggle-height: 1.25rem; // 20px
+$slider-size: 0.875rem; // 14px
+$border-radius-round: 50%;
+$border-radius-pill: 0.625rem; // 10px
+$border-radius-small: 0.125rem; // 2px

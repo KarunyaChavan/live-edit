@@ -1,3 +1,116 @@
+/**
+ * Live Edit Frontend Styles
+ *
+ * @package live-edit
+ */
+
+@use 'variables' as *;
+
 /*
-Write your Sass code here for front-end.
-*/
+ * Target the Admin Bar nodes
+ */
+#wpadminbar {
+
+	#wp-admin-bar-live-edit-toggle {
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem; // 8px
+		}
+	}
+
+	// Toggle switch wrapper
+	.live-edit-switch {
+		display: inline-flex;
+		align-items: center;
+		position: relative;
+		width: $toggle-width;
+		height: $toggle-height;
+		background-color: $switch-bg;
+		border-radius: $border-radius-pill;
+		transition: background-color 0.3s ease;
+		vertical-align: middle;
+	}
+
+	// Toggle switch sliding circle
+	.live-edit-slider {
+		display: block;
+		width: $slider-size;
+		height: $slider-size;
+		background-color: $white;
+		border-radius: $border-radius-round;
+		transition: transform 0.3s ease;
+		margin-left: 0.1875rem; // 3px (center aligning inside pill)
+	}
+
+	// Hide the save button by default
+	#wp-admin-bar-live-edit-save.hide-if-no-live-edit {
+		display: none !important;
+	}
+}
+
+/*
+ * Active state for the Live Edit toggle and blocks
+ */
+.live-edit-active {
+
+	#wpadminbar {
+
+		#wp-admin-bar-live-edit-toggle {
+			background-color: $wp-blue;
+			
+			a {
+				color: $white !important;
+			}
+			
+			.live-edit-switch {
+				background-color: $switch-active-bg;
+			}
+
+			.live-edit-slider {
+				transform: translateX(1rem); // 16px slide distance
+			}
+		}
+
+		#wp-admin-bar-live-edit-save {
+
+			a {
+				color: $wp-green !important;
+				font-weight: 700;
+			}
+		}
+	}
+
+	.live-edit-block {
+		position: relative;
+		outline: 1px dashed $block-outline-color;
+		transition: outline 0.2s ease-in-out, background-color 0.2s ease-in-out;
+		cursor: text;
+		padding-left: 0.25rem; // 4px
+		padding-right: 0.25rem; // 4px
+		margin-left: -0.25rem; // -4px
+		margin-right: -0.25rem; // -4px
+		border-radius: $border-radius-small;
+
+		&:hover {
+			outline: 2px solid $block-hover-outline-color;
+			background-color: $block-bg-highlight;
+			z-index: 10;
+		}
+
+		&:focus {
+			outline: 2px solid $block-active-outline-color;
+			background-color: $block-bg-highlight;
+			z-index: 20;
+		}
+		
+		// Style links within editable blocks
+		/* stylelint-disable-next-line no-descending-specificity */
+		a {
+			cursor: not-allowed;
+			text-decoration: underline;
+			text-decoration-style: dashed;
+		}
+	}
+}

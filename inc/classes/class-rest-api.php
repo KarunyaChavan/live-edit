@@ -50,7 +50,7 @@ class Rest_API {
 			return $content;
 		}
 
-		// Prevent round-trip serialization breaking other contexts (archives, related posts, etc).
+		// Only inject on the main singular query so block indexes stay aligned with the save-side traversal.
 		if ( ! is_singular() || ! is_main_query() || get_queried_object_id() !== $post_id ) {
 			return $content;
 		}
@@ -124,7 +124,9 @@ class Rest_API {
 					'text_content' => [
 						'required' => true,
 						'type'     => 'string',
-						// No strict HTML sanitizer because we want to allow '<' symbols. We escape it safely during block update.
+						// No strict sanitizer here so the raw block HTML survives the round trip;
+						// it is sanitized with wp_kses_post inside traverse_and_update_block().
+						// Note: wp_kses_post strips literal '<' and '>' characters from text.
 					],
 				],
 			]
@@ -174,7 +176,7 @@ class Rest_API {
 			);
 		}
 
-		// wp_get_post_lock is an admin function, we need to include it.
+		// wp_check_post_lock is an admin function, we need to include it.
 		if ( ! function_exists( 'wp_get_post_lock' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/post.php';
 		}
@@ -243,7 +245,6 @@ class Rest_API {
 		}
 
 		// Serialize blocks back to string.
-		// Important: Do not use wp_kses_post on the serialized string, as it strips <!-- wp: --> markers.
 		$new_post_content = serialize_blocks( $blocks );
 
 		// Update the post, ensuring a revision is created.

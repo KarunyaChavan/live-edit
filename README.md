@@ -1,54 +1,152 @@
 # LiveEdit for Gutenberg
 
-> **Edit WordPress where your content lives.**
+> Edit WordPress where your content lives.
 
-LiveEdit is a modern frontend editing layer for WordPress Gutenberg blocks. It transforms any published page into an editable canvas for users with appropriate permissions, giving you a true "What You See Is What You Get" (WYSIWYG) editing experience akin to Notion or Webflow.
+LiveEdit is a WordPress plugin that brings inline frontend editing to Gutenberg-powered websites. Instead of opening the Block Editor for every small content change, authorized users can edit text, images, and other supported block content directly on the page they are viewing.
+
+The goal is simple: make quick content updates as intuitive as editing a document while keeping Gutenberg as the source of truth.
+
+---
+
+## Features
+
+### Inline Text Editing
+Edit headings, paragraphs, and other supported text blocks directly on the frontend.
+
+### Frontend Image Replacement
+Replace images without opening the Block Editor.
+
+### Button Editing *(Planned)*
+Update button labels, links, and styles inline.
+
+### Edit Mode
+The website looks exactly the same for visitors. Editing tools only appear when an authorized user enables **Edit Mode** from the WordPress Admin Bar.
+
+### Role-Based Permissions
+Only users with the appropriate capabilities can enter Edit Mode and publish changes.
+
+---
+
+## How It Works
+
+1. Visit any published page.
+2. Enable **Edit Mode** from the WordPress Admin Bar.
+3. Click a supported block.
+4. Edit the content directly on the page.
+5. Save your changes.
+
+LiveEdit updates the underlying Gutenberg block attributes, allowing the Block Editor and frontend to stay perfectly in sync.
+
+---
+
+## Supported Blocks
+
+Current support includes:
+
+- Paragraph
+- Heading
+
+Planned support:
+
+- Image
+- Button
+- List
+- Quote
+- Cover
+- Columns
+- Group
+- Custom Blocks
+
+---
 
 ## Why LiveEdit?
 
-WordPress has evolved into a full CMS, yet the editing experience often requires users to leave the page they’re viewing, navigate the backend, and find the corresponding block just to fix a simple typo. LiveEdit removes that friction.
+Traditional WordPress editing requires users to:
 
-- **No wp-admin:** Stay on the frontend.
-- **No context switching:** Edit the page you are looking at.
-- **Client-friendly:** Prevent layout breaks by only exposing inline text and image editing controls to clients.
+- Navigate to the dashboard
+- Open the Block Editor
+- Locate the correct page
+- Find the correct block
+- Make a small edit
+- Save and return to the frontend
 
-## Features (Roadmap)
+LiveEdit removes that workflow entirely by allowing content edits where the content actually lives.
 
-- **Inline Text Editing:** Click any heading or paragraph. Start typing. Save instantly.
-- **One-Click Image Replacement:** Hover an image, click replace, and update directly from the Media Library.
-- **Button Editing:** Edit button labels, links, and styles without opening the editor.
-- **Seamless View Mode:** The frontend looks exactly as intended for visitors. An "Edit Mode" toggle in the Admin Bar enables editing only when needed.
-- **Permission Aware:** Only authorized roles (Administrators, Editors) can toggle Edit Mode.
+It is designed for:
+
+- Content editors
+- Marketing teams
+- Agency clients
+- Website administrators
+
+while reducing the chances of accidentally modifying layouts or block settings.
+
+---
 
 ## Installation
 
-1. Clone or download this repository into your `wp-content/plugins/` directory:
-   ```bash
-   git clone https://github.com/KarunyaChavan/live-edit.git
-   ```
-2. Navigate to the plugin directory and install dependencies:
-   ```bash
-   cd live-edit
-   npm install
-   composer install
-   ```
-3. Build the assets:
-   ```bash
-   npm run build:js
-   ```
-4. Activate the plugin through the 'Plugins' menu in WordPress.
+Clone the repository into your WordPress plugins directory.
+
+```bash
+git clone https://github.com/KarunyaChavan/live-edit.git
+```
+
+Install PHP and JavaScript dependencies.
+
+```bash
+cd live-edit
+
+composer install
+npm install
+```
+
+Build the production assets.
+
+```bash
+npm run build
+```
+
+Activate the plugin from **Plugins → Installed Plugins**.
+
+---
 
 ## Development
 
-This plugin relies on the `@wordpress/scripts` package for building modern JavaScript (React) tailored for the Gutenberg block editor.
+Start the JavaScript development server.
 
-### Commands
+```bash
+npm run start:js
+```
 
-- `npm run start:js` - Run webpack in watch mode for development.
-- `npm run build:js` - Build production-ready assets.
-- `npm run lint:js` - Lint JavaScript files using modern WordPress Coding Standards (WPCS).
-- `composer run lint:php` - Lint PHP files using PHP_CodeSniffer.
+Build production assets.
 
-## License
+```bash
+npm run build:js
+```
 
-This project is licensed under the GPL-2.0-or-later License.
+Lint JavaScript.
+
+```bash
+npm run lint:js
+```
+
+Lint PHP.
+
+```bash
+composer run lint:php
+```
+
+---
+
+## Contributing
+
+Contributions, bug reports, and feature requests are welcome.
+
+If you'd like to contribute:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes.
+4. Submit a Pull Request.
+
+Please follow the existing coding standards for both PHP and JavaScript.

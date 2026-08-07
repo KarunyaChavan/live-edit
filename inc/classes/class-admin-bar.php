@@ -76,7 +76,7 @@ class Admin_Bar {
 				'title' => '<span class="ab-label live-edit__label">' . __( 'Save Changes', 'live-edit' ) . '</span>',
 				'href'  => '#',
 				'meta'  => [
-					'class' => 'live-edit__save live-edit__save--hidden', // We'll use CSS to hide it by default.
+					'class' => 'live-edit__save live-edit__save--hidden', // Hidden by default; JS removes the modifier when live edit is activated.
 					'title' => __( 'Save your live edits', 'live-edit' ),
 				],
 			]

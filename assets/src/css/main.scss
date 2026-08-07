@@ -76,8 +76,19 @@
 		#wp-admin-bar-live-edit-save {
 
 			a {
-				color: $wp-green !important;
+				color: $white !important;
 				font-weight: 700;
+
+				// Short-lived save feedback states.
+				&.save-success {
+					color: $wp-green !important;
+					transition: color 0.3s ease;
+				}
+
+				&.save-error {
+					color: #ff8085 !important; // Light red, readable on dark admin bar.
+					transition: color 0.3s ease;
+				}
 			}
 		}
 	}

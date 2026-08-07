@@ -190,6 +190,23 @@ class LiveEdit {
 	}
 
 	/**
+	 * Briefly flash a state class on the save button.
+	 *
+	 * @param {string} className State class to apply.
+	 */
+	flashSaveState( className ) {
+		const saveLink = this.saveBtn ? this.saveBtn.querySelector( 'a' ) : null;
+		if ( ! saveLink ) {
+			return;
+		}
+
+		saveLink.classList.add( className );
+		window.setTimeout( () => {
+			saveLink.classList.remove( className );
+		}, 2000 );
+	}
+
+	/**
 	 * Save dirty blocks to REST API.
 	 */
 	async save() {
@@ -248,8 +265,10 @@ class LiveEdit {
 
 		if ( ! hasError ) {
 			this.dirtyBlocks.clear();
+			this.flashSaveState( 'save-success' );
 			this.showToast( 'Changes saved successfully!' );
 		} else {
+			this.flashSaveState( 'save-error' );
 			this.showToast( 'Some changes failed to save.', true );
 		}
 	}

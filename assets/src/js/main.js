@@ -63,17 +63,17 @@ class LiveEdit {
 	 */
 	toggle() {
 		this.isActive = ! this.isActive;
-		document.body.classList.toggle( 'live-edit-active', this.isActive );
+		document.body.classList.toggle( 'live-edit--active', this.isActive );
 
 		if ( this.isActive ) {
 			this.enableEditing();
 			if ( this.saveBtn ) {
-				this.saveBtn.classList.remove( 'hide-if-no-live-edit' );
+				this.saveBtn.classList.remove( 'live-edit__save--hidden' );
 			}
 		} else {
 			this.disableEditing();
 			if ( this.saveBtn ) {
-				this.saveBtn.classList.add( 'hide-if-no-live-edit' );
+				this.saveBtn.classList.add( 'live-edit__save--hidden' );
 			}
 		}
 	}
@@ -94,7 +94,7 @@ class LiveEdit {
 		const titleEl = document.querySelector( '.wp-block-post-title, .entry-title' );
 		if ( titleEl ) {
 			titleEl.setAttribute( 'contenteditable', 'plaintext-only' );
-			titleEl.classList.add( 'live-edit-block' );
+			titleEl.classList.add( 'live-edit__block' );
 			titleEl.dataset.liveEditField = 'title';
 			titleEl.addEventListener( 'input', this.handleInput );
 			titleEl.addEventListener( 'click', this.preventNav );
@@ -103,7 +103,7 @@ class LiveEdit {
 		const blocks = this.getBlocks();
 		blocks.forEach( ( block ) => {
 			block.setAttribute( 'contenteditable', 'true' );
-			block.classList.add( 'live-edit-block' );
+			block.classList.add( 'live-edit__block' );
 			block.addEventListener( 'input', this.handleInput );
 			block.addEventListener( 'click', this.preventNav );
 		} );
@@ -116,7 +116,7 @@ class LiveEdit {
 		const titleEl = document.querySelector( '.wp-block-post-title, .entry-title' );
 		if ( titleEl ) {
 			titleEl.removeAttribute( 'contenteditable' );
-			titleEl.classList.remove( 'live-edit-block' );
+			titleEl.classList.remove( 'live-edit__block' );
 			titleEl.removeEventListener( 'input', this.handleInput );
 			titleEl.removeEventListener( 'click', this.preventNav );
 		}
@@ -124,7 +124,7 @@ class LiveEdit {
 		const blocks = this.getBlocks();
 		blocks.forEach( ( block ) => {
 			block.removeAttribute( 'contenteditable' );
-			block.classList.remove( 'live-edit-block' );
+			block.classList.remove( 'live-edit__block' );
 			block.removeEventListener( 'input', this.handleInput );
 			block.removeEventListener( 'click', this.preventNav );
 		} );
@@ -190,19 +190,18 @@ class LiveEdit {
 	}
 
 	/**
-	 * Briefly flash a state class on the save button.
+	 * Briefly flash a state modifier on the save button element.
 	 *
-	 * @param {string} className State class to apply.
+	 * @param {string} modifier Modifier class to apply.
 	 */
-	flashSaveState( className ) {
-		const saveLink = this.saveBtn ? this.saveBtn.querySelector( 'a' ) : null;
-		if ( ! saveLink ) {
+	flashSaveState( modifier ) {
+		if ( ! this.saveBtn ) {
 			return;
 		}
 
-		saveLink.classList.add( className );
+		this.saveBtn.classList.add( modifier );
 		window.setTimeout( () => {
-			saveLink.classList.remove( className );
+			this.saveBtn.classList.remove( modifier );
 		}, 2000 );
 	}
 
@@ -265,10 +264,10 @@ class LiveEdit {
 
 		if ( ! hasError ) {
 			this.dirtyBlocks.clear();
-			this.flashSaveState( 'save-success' );
+			this.flashSaveState( 'live-edit__save--success' );
 			this.showToast( 'Changes saved successfully!' );
 		} else {
-			this.flashSaveState( 'save-error' );
+			this.flashSaveState( 'live-edit__save--error' );
 			this.showToast( 'Some changes failed to save.', true );
 		}
 	}

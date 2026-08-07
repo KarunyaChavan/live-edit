@@ -60,10 +60,10 @@ class Admin_Bar {
 		$admin_bar->add_node(
 			[
 				'id'    => 'live-edit-toggle',
-				'title' => '<span class="ab-label">' . __( 'Live Edit', 'live-edit' ) . '</span><span class="live-edit-switch"><span class="live-edit-slider"></span></span>',
+				'title' => '<span class="ab-label live-edit__label">' . __( 'Live Edit', 'live-edit' ) . '</span><span class="live-edit__switch"><span class="live-edit__slider"></span></span>',
 				'href'  => '#',
 				'meta'  => [
-					'class' => 'live-edit-toggle-btn',
+					'class' => 'live-edit__toggle',
 					'title' => __( 'Toggle Live Edit mode', 'live-edit' ),
 				],
 			]
@@ -73,10 +73,10 @@ class Admin_Bar {
 		$admin_bar->add_node(
 			[
 				'id'    => 'live-edit-save',
-				'title' => '<span class="ab-label">' . __( 'Save Changes', 'live-edit' ) . '</span>',
+				'title' => '<span class="ab-label live-edit__label">' . __( 'Save Changes', 'live-edit' ) . '</span>',
 				'href'  => '#',
 				'meta'  => [
-					'class' => 'live-edit-save-btn hide-if-no-live-edit', // We'll use CSS to hide it by default.
+					'class' => 'live-edit__save live-edit__save--hidden', // We'll use CSS to hide it by default.
 					'title' => __( 'Save your live edits', 'live-edit' ),
 				],
 			]

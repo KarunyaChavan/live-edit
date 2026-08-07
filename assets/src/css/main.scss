@@ -1,17 +1,20 @@
 /**
  * Live Edit Frontend Styles
  *
+ * BEM naming: block `live-edit`, elements `live-edit__*`, modifiers `live-edit__*--*`.
+ *
  * @package live-edit
  */
 
 @use 'variables' as *;
 
 /*
- * Target the Admin Bar nodes
+ * Admin bar: toggle and save nodes (elements of the `live-edit` block).
  */
 #wpadminbar {
 
-	#wp-admin-bar-live-edit-toggle {
+	// Toggle button (li element).
+	.live-edit__toggle {
 
 		a {
 			display: inline-flex;
@@ -20,8 +23,8 @@
 		}
 	}
 
-	// Toggle switch wrapper
-	.live-edit-switch {
+	// Toggle switch wrapper.
+	.live-edit__switch {
 		display: inline-flex;
 		align-items: center;
 		position: relative;
@@ -33,8 +36,8 @@
 		vertical-align: middle;
 	}
 
-	// Toggle switch sliding circle
-	.live-edit-slider {
+	// Toggle switch sliding circle.
+	.live-edit__slider {
 		display: block;
 		width: $slider-size;
 		height: $slider-size;
@@ -44,56 +47,63 @@
 		margin-left: 0.1875rem; // 3px (center aligning inside pill)
 	}
 
-	// Hide the save button by default
-	#wp-admin-bar-live-edit-save.hide-if-no-live-edit {
+	// Save button (li element), hidden until live edit is active.
+	.live-edit__save--hidden {
 		display: none !important;
 	}
 }
 
 /*
- * Active state for the Live Edit toggle and blocks
+ * Active state: `live-edit--active` modifier on <body>.
  */
-.live-edit-active {
+.live-edit--active {
 
 	#wpadminbar {
 
-		#wp-admin-bar-live-edit-toggle {
+		.live-edit__toggle {
 			background-color: $wp-blue;
-			
+
 			a {
 				color: $white !important;
 			}
-			
-			.live-edit-switch {
+
+			.live-edit__switch {
 				background-color: $switch-active-bg;
 			}
 
-			.live-edit-slider {
+			.live-edit__slider {
 				transform: translateX(1rem); // 16px slide distance
 			}
 		}
 
-		#wp-admin-bar-live-edit-save {
+		.live-edit__save {
 
 			a {
 				color: $white !important;
 				font-weight: 700;
+			}
 
-				// Short-lived save feedback states.
-				&.save-success {
+			// Short-lived save feedback modifiers.
+			&--success {
+
+				a {
 					color: $wp-green !important;
 					transition: color 0.3s ease;
 				}
+			}
 
-				&.save-error {
-					color: #ff8085 !important; // Light red, readable on dark admin bar.
+			&--error {
+
+				a {
+					color: $wp-light-red !important;
 					transition: color 0.3s ease;
 				}
 			}
 		}
 	}
 
-	.live-edit-block {
+	// Editable content block.
+	.live-edit__block {
 		position: relative;
 		outline: 1px dashed $block-outline-color;
 		transition: outline 0.2s ease-in-out, background-color 0.2s ease-in-out;
@@ -115,7 +125,7 @@
 			background-color: $block-bg-highlight;
 			z-index: 20;
 		}
-		
+
 		// Style links within editable blocks
 		/* stylelint-disable-next-line no-descending-specificity */
 		a {

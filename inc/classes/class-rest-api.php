@@ -2,6 +2,10 @@
 /**
  * REST API class.
  *
+ * Registers the REST endpoint that persists live-edited block content,
+ * enforces nonce-based permission checks and injects editing IDs into
+ * the frontend content markup.
+ *
  * @package live-edit
  */
 
@@ -75,6 +79,11 @@ class Rest_API {
 		foreach ( $blocks as &$block ) {
 			if ( in_array( $block['blockName'], $supported_blocks, true ) ) {
 				$html = trim( $block['innerHTML'] );
+
+				// Split the opening tag into tag name (group 1) and the rest of the
+				// attributes up to the closing ">" (group 2), so the live edit ID can
+				// be inserted directly after the tag name. Anchored at ^ so only the
+				// first tag of the block is ever matched.
 				if ( preg_match( '/^(<[a-zA-Z0-9]+)([^>]*>)/', $html, $matches ) ) {
 					$block['innerHTML'] = $matches[1] . ' data-live-edit-id="' . $counter . '"' . $matches[2] . substr( $html, strlen( $matches[0] ) );
 					if ( isset( $block['innerContent'][0] ) && is_string( $block['innerContent'][0] ) ) {
@@ -285,10 +294,16 @@ class Rest_API {
 			if ( in_array( $block['blockName'], $supported_blocks, true ) ) {
 				if ( $counter === $target_index ) {
 					$html = trim( $block['innerHTML'] );
-					// Extract the opening tag safely without lazy matching that could fail on nested content.
+
+					// Extract the whole opening tag ("<p class="x">") into one group so
+					// it can be rebuilt verbatim around the new content. The greedy
+					// [^>]* stops at the first ">", which avoids lazy matching that
+					// could consume into nested block content on a failed match.
 					if ( preg_match( '/^(<[a-zA-Z0-9]+[^>]*>)/', $html, $matches ) ) {
 						$open_tag = $matches[1];
-						// Find the tag name to construct the corresponding closing tag.
+
+						// Capture the tag name ("<p ..." → "p") so the matching closing
+						// tag ("</p>") can be reconstructed for the updated innerHTML.
 						preg_match( '/^<([a-zA-Z0-9]+)/', $open_tag, $tag_match );
 						$tag_name  = $tag_match[1];
 						$close_tag = "</{$tag_name}>";

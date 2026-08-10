@@ -2,6 +2,9 @@
 /**
  * Autoloader file for plugin.
  *
+ * Registers a namespace-based autoloader that maps Live_Edit\ class
+ * names to their corresponding files under the plugin's inc/ directory.
+ *
  * @package live-edit
  */
 
@@ -55,7 +58,8 @@ function autoloader( $class_name = '' ) {
 				$file_name = sprintf( 'trait-%s', trim( strtolower( $path[2] ) ) );
 				break;
 
-			case 'plugin-configs': // phpcs:ignore PSR2.ControlStructures.SwitchDeclaration.TerminatingComment
+			// phpcs:ignore PSR2.ControlStructures.SwitchDeclaration.TerminatingComment -- Fall-through to default is intentional for generic class loading.
+			case 'plugin-configs':
 				/**
 				 * If there is class name provided for specific directory then load that.
 				 * otherwise find in inc/ directory.
@@ -79,7 +83,8 @@ function autoloader( $class_name = '' ) {
 	// For Windows platform, validate_file returns 2 so we've added this condition as well.
 	if ( ! empty( $resource_path ) && file_exists( $resource_path ) && ( 0 === $resource_path_valid || 2 === $resource_path_valid ) ) {
 		// We are already making sure that the file exists and it's valid.
-		require_once( $resource_path ); // phpcs:ignore
+		// phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable, PEAR.Files.IncludingFile.BracketsNotRequired -- Path is validated via validate_file() and file_exists() above; parentheses kept for clarity.
+		require_once( $resource_path );
 	}
 }
 

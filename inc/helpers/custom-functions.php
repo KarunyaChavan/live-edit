@@ -2,6 +2,10 @@
 /**
  * Live Edit custom functions.
  *
+ * Collection of shared helpers: cache key generation and cached query
+ * results, template and data file loading, plus environment and device
+ * detection.
+ *
  * @package live-edit
  */
 
@@ -92,12 +96,14 @@ function live_edit_template( $template, $variables = [], $output = false ) {
 	}
 
 	if ( ! empty( $variables ) && is_array( $variables ) ) {
-		extract( $variables, EXTR_SKIP ); // phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Used as an exception as there is no better alternative.
+		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract -- Extract is the only way to expose variables to the included template.
+		extract( $variables, EXTR_SKIP );
 	}
 
 	ob_start();
 
-	include $template_file; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
+	// phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable -- Path is built from a fixed directory and checked with file_exists() above.
+	include $template_file;
 
 	$markup = ob_get_clean();
 
@@ -105,7 +111,8 @@ function live_edit_template( $template, $variables = [], $output = false ) {
 		return $markup;
 	}
 
-	echo $markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped already in template.
+	// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Template output is already escaped where needed.
+	echo $markup;
 }
 
 /**
@@ -122,7 +129,8 @@ function live_edit_get_data( $slug, $default_value = [] ) {
 
 	if ( file_exists( $data_file ) ) {
 
-		$file_content = require $data_file; // phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable
+		// phpcs:ignore WordPressVIPMinimum.Files.IncludingFile.UsingVariable -- Path is built from a fixed directory and checked with file_exists() above.
+		$file_content = require $data_file;
 
 		return $file_content;
 

@@ -2,6 +2,9 @@
 /**
  * Rewrite class.
  *
+ * Registers any custom rewrite rules the plugin requires for its
+ * frontend routes.
+ *
  * @package live-edit
  */
 

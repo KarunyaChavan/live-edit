@@ -2,6 +2,9 @@
 /**
  * Assets class.
  *
+ * Registers and enqueues the plugin's compiled frontend scripts and
+ * styles together with their Webpack-generated dependency manifests.
+ *
  * @package live-edit
  */
 

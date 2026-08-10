@@ -2,6 +2,9 @@
 /**
  * Class for SEO related stuff.
  *
+ * Renders custom HTML meta tags, such as robots directives, from an
+ * array of tag attributes for the frontend.
+ *
  * @package live-edit
  */
 

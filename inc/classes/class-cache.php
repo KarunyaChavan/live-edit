@@ -2,6 +2,10 @@
 /**
  * Cache class.
  *
+ * Fluent wrapper around the WordPress object cache for caching expensive
+ * queries and rendering data, with support for dynamic expiry and
+ * automatic invalidation through actions and filters.
+ *
  * @package live-edit
  */
 
@@ -281,7 +285,8 @@ class Cache {
 				$data = 'empty';
 			}
 
-			wp_cache_set( $this->key, $data, self::$cache_group, $this->expiry ); // phpcs:ignore WordPressVIPMinimum.Performance.LowExpiryCacheTime.CacheTimeUndetermined
+			// phpcs:ignore WordPressVIPMinimum.Performance.LowExpiryCacheTime.CacheTimeUndetermined -- Expiry is dynamic; use the expires_in() fluent method.
+			wp_cache_set( $this->key, $data, self::$cache_group, $this->expiry );
 
 			if ( 'empty' === $data ) {
 				return false;

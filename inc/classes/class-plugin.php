@@ -2,6 +2,9 @@
 /**
  * Plugin manifest class.
  *
+ * Bootstrap entry point of the plugin. Instantiates all other plugin
+ * classes when the plugin is loaded.
+ *
  * @package live-edit
  */
 

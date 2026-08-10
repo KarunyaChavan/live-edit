@@ -2,6 +2,9 @@
 /**
  * Admin Bar class.
  *
+ * Adds the Live Edit toggle and Save Changes nodes to the frontend admin
+ * bar for users who can edit the current post.
+ *
  * @package live-edit
  */
 

@@ -1,5 +1,9 @@
 /**
- * Live Edit Frontend Engine
+ * Live Edit frontend engine.
+ *
+ * Toggles inline editing mode on the frontend, tracks edited blocks in a
+ * dirty map, provides save feedback via the admin bar and toasts, and
+ * persists changes through the plugin's REST endpoint.
  */
 
 /**

@@ -2,6 +2,10 @@
 /**
  * Singleton trait which implements Singleton pattern in any class in which this trait is used.
  *
+ * Provides a final get_instance() entry point backed by late static
+ * binding and prevents direct instantiation and cloning in classes
+ * that make use of this trait.
+ *
  * @package live-edit
  */
 
@@ -58,7 +62,8 @@ trait Singleton {
 			/**
 			 * Dependent items can use the live_edit_singleton_init_{$called_class} hook to execute code
 			 */
-			do_action( sprintf( 'live_edit_singleton_init_%s', $called_class ) ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
+			// phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Dynamic hook name derived from the called class.
+			do_action( sprintf( 'live_edit_singleton_init_%s', $called_class ) );
 
 		}
 

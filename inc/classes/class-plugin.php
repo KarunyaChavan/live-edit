@@ -7,7 +7,7 @@
 
 namespace Live_Edit\Inc;
 
-use \Live_Edit\Inc\Traits\Singleton;
+use Live_Edit\Inc\Traits\Singleton;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -30,6 +30,5 @@ class Plugin {
 		SEO::get_instance();
 		Admin_Bar::get_instance();
 		Rest_API::get_instance();
-
 	}
 }

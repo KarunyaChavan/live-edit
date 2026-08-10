@@ -72,7 +72,6 @@ function live_edit_get_template_content( $slug, $vars = [] ) {
 	$markup = ob_get_clean();
 
 	return $markup;
-
 }
 
 /**
@@ -80,11 +79,11 @@ function live_edit_get_template_content( $slug, $vars = [] ) {
  *
  * @param string $template  Name or path of the template within /templates folder without php extension.
  * @param array  $variables pass an array of variables you want to use in template.
- * @param bool   $echo      Whether to echo out the template content or not.
+ * @param bool   $output     Whether to echo out the template content or not.
  *
  * @return string|void Template markup.
  */
-function live_edit_template( $template, $variables = [], $echo = false ) {
+function live_edit_template( $template, $variables = [], $output = false ) {
 
 	$template_file = sprintf( '%1$s/templates/%2$s.php', LIVE_EDIT_PATH, $template );
 
@@ -102,23 +101,22 @@ function live_edit_template( $template, $variables = [], $echo = false ) {
 
 	$markup = ob_get_clean();
 
-	if ( ! $echo ) {
+	if ( ! $output ) {
 		return $markup;
 	}
 
 	echo $markup; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Output escaped already in template.
-
 }
 
 /**
  * Get data file content from '/data' directory.
  *
  * @param  string $slug file Data file name without '.php' extention.
- * @param  array  $default   Default value to return if file not found.
+ * @param  array  $default_value Default value to return if file not found.
  *
  * @return mixed Data file content.
  */
-function live_edit_get_data( $slug, $default = [] ) {
+function live_edit_get_data( $slug, $default_value = [] ) {
 
 	$data_file = sprintf( LIVE_EDIT_PATH . '/inc/data/%s.php', $slug );
 
@@ -130,8 +128,7 @@ function live_edit_get_data( $slug, $default = [] ) {
 
 	}
 
-	return $default;
-
+	return $default_value;
 }
 
 /**
@@ -146,7 +143,6 @@ function live_edit_is_production() {
 	}
 
 	return false;
-
 }
 
 /**

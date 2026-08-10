@@ -161,7 +161,7 @@ class Cache {
 				if ( is_string( $action_hook ) && ! empty( $action_hook ) ) {
 					add_action(
 						$action_hook,
-						function() use ( $cache_key, $cache_group ) {
+						function () use ( $cache_key, $cache_group ) {
 							wp_cache_delete( $cache_key, $cache_group );
 						},
 						1
@@ -176,7 +176,7 @@ class Cache {
 				if ( is_string( $filter_hook ) && ! empty( $filter_hook ) ) {
 					add_filter(
 						$filter_hook,
-						function( $params ) use ( $cache_key, $cache_group ) {
+						function ( $params ) use ( $cache_key, $cache_group ) {
 							wp_cache_delete( $cache_key, $cache_group );
 							return $params;
 						},

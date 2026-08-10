@@ -22,19 +22,34 @@
   },
   "devDependencies": {
     "@babel/core": "7.29.6",
-    "@wordpress/babel-preset-default": "8.37.0",
+    "@wordpress/babel-preset-default": "8.52.0",
     "@wordpress/browserslist-config": "6.33.0",
     "@wordpress/env": "10.30.0",
     "@wordpress/eslint-plugin": "23.0.0",
-    "@wordpress/scripts": "31.6.0",
+    "@wordpress/scripts": "34.0.0",
     "browserslist": "4.27.0",
     "cross-env": "10.1.0",
-    "css-minimizer-webpack-plugin": "7.0.2",
+    "css-minimizer-webpack-plugin": "8.0.0",
     "eslint": "8.40.0",
     "eslint-plugin-eslint-comments": "3.2.0",
     "eslint-plugin-import": "2.32.0",
     "npm-run-all": "4.1.5",
     "webpack-remove-empty-scripts": "1.1.1"
+  },
+  "overrides": {
+    "adm-zip": "^0.6.0",
+    "linkify-it": "^5.0.2",
+    "lighthouse": "^13.4.1",
+    "@sentry/node": "^10.69.0",
+    "serialize-javascript": "^7.1.0",
+    "uuid": "^11.1.1",
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^9.0.9"
+    },
+    "markdownlint-cli": {
+      "minimatch": "^3.1.5"
+    },
+    "markdownlint-cli": "^0.49.1"
   },
   "scripts": {
     "build:js": "wp-scripts build --config ./webpack.config.js",

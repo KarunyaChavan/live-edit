@@ -81,7 +81,7 @@ class Rest_API {
 						$block['innerContent'][0] = $block['innerHTML'];
 					}
 				}
-				$counter++;
+				++$counter;
 			}
 
 			if ( ! empty( $block['innerBlocks'] ) ) {
@@ -309,7 +309,7 @@ class Rest_API {
 
 					return true;
 				}
-				$counter++;
+				++$counter;
 			}
 
 			// Traverse inner blocks (depth-first).

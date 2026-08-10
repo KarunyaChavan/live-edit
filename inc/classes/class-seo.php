@@ -25,7 +25,6 @@ class SEO {
 	protected function __construct() {
 
 		$this->setup_hooks();
-
 	}
 
 	/**

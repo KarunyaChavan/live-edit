@@ -10,7 +10,7 @@
     "live-edit"
   ],
   "require-dev": {
-      "wp-coding-standards/wpcs": "^2.3",
+      "wp-coding-standards/wpcs": "^3.4",
       "phpcompatibility/phpcompatibility-wp": "^2.1",
       "phpunit/phpunit": "^9.6",
       "wp-phpunit/wp-phpunit": "^6.9",

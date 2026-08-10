@@ -13,15 +13,15 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Auto loader function.
  *
- * @param string $resource Source namespace.
+ * @param string $class_name Source namespace.
  *
  * @return void
  */
-function autoloader( $resource = '' ) {
+function autoloader( $class_name = '' ) {
 
 	$resource_path  = false;
 	$namespace_root = 'Live_Edit\\';
-	$resource       = trim( $resource, '\\' );
+	$resource       = trim( $class_name, '\\' );
 
 	if ( empty( $resource ) || strpos( $resource, '\\' ) === false || strpos( $resource, $namespace_root ) !== 0 ) {
 		// Not our namespace, bail out.
@@ -81,7 +81,6 @@ function autoloader( $resource = '' ) {
 		// We are already making sure that the file exists and it's valid.
 		require_once( $resource_path ); // phpcs:ignore
 	}
-
 }
 
 spl_autoload_register( '\Live_Edit\Inc\Helpers\autoloader' );

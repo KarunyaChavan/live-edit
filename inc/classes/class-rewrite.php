@@ -25,7 +25,6 @@ class Rewrite {
 	protected function __construct() {
 
 		$this->setup_hooks();
-
 	}
 
 	/**

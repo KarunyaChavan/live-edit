@@ -191,7 +191,7 @@ class Rest_API {
 			$update_args['post_content'] = wp_slash( $new_post_content );
 		}
 
-		if ( empty( $update_args['post_title'] ) && empty( $update_args['post_content'] ) ) {
+		if ( ! isset( $update_args['post_title'] ) && ! isset( $update_args['post_content'] ) ) {
 			return new WP_Error(
 				'no_changes',
 				__( 'No valid updates found.', 'live-edit' ),

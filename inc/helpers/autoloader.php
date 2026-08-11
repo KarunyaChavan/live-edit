@@ -61,8 +61,8 @@ function autoloader( $class_name = '' ) {
 			case 'block-handlers':
 				$directory  = 'classes/block-handlers';
 				$class_part = trim( strtolower( $path[2] ) );
-				if ( str_ends_with( $class_part, '-interface' ) ) {
-					$file_name = sprintf( 'interface-%s', str_replace( '-interface', '', $class_part ) );
+				if ( '-interface' === substr( $class_part, -10 ) ) {
+					$file_name = sprintf( 'interface-%s', substr( $class_part, 0, -10 ) );
 				} else {
 					$file_name = sprintf( 'class-%s', $class_part );
 				}

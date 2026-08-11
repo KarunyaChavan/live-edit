@@ -175,14 +175,8 @@ class Rest_API {
 			$counter = 0;
 			$updated = Block_Manager::get_instance()->traverse_and_update_block( $parsed_blocks, $block_index, $block_data, $counter );
 
-			if ( true === $updated ) {
+			if ( $updated ) {
 				$content_updated = true;
-			} elseif ( 'invalid_format' === $updated ) {
-				return new WP_Error(
-					'block_update_failed',
-					__( 'The block content format is invalid and cannot be updated.', 'live-edit' ),
-					[ 'status' => 400 ]
-				);
 			}
 		}
 

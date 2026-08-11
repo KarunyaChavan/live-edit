@@ -124,7 +124,7 @@ class Block_Manager {
 	 * @param array $payload_data Incoming payload data.
 	 * @param int   $counter      Current counter.
 	 *
-	 * @return bool|string True if updated, false if not found.
+	 * @return bool True if updated, false if not found.
 	 */
 	public function traverse_and_update_block( &$blocks, $target_index, $payload_data, &$counter ) {
 		foreach ( $blocks as &$block ) {

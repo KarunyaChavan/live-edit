@@ -72,20 +72,7 @@ class Text_Block_Handler implements Block_Handler_Interface {
 		$tags = new \WP_HTML_Tag_Processor( $block['innerHTML'] );
 
 		if ( $tags->next_tag() ) {
-			$tag_name   = $tags->get_tag();
-			$attributes = '';
-
-			// WP_HTML_Tag_Processor in 6.2/6.3 doesn't have a direct way to get all attributes or replace inner content easily.
-			// So we can extract the full opening tag, then reconstruct it.
-			// Since we want to drop Regex entirely, let's use DOMDocument or a safer approach.
-			// Wait, WP_HTML_Tag_Processor updates attributes. To replace inner HTML:
-			// actually we can just capture the opening tag, and use the tag name to make the closing tag.
-			// Is there a better way without DOMDocument?
-			// Since Gutenberg provides the block content as `innerHTML`, for a paragraph it is `<p ...>...</p>`.
-
-			// Let's use preg_match just for the opening tag but correctly handling the closing tag,
-			// OR we can use DOMDocument.
-			// DOMDocument is safer for modifying innerHTML.
+			// DOMDocument is used here to safely modify innerHTML while preserving the outer wrapper.
 			$dom           = new \DOMDocument();
 			$dom->encoding = 'UTF-8';
 

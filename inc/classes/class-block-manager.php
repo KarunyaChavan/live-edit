@@ -56,73 +56,64 @@ class Block_Manager {
 	}
 
 	/**
-	 * Counter for block indexes.
-	 *
-	 * @var int
-	 */
-	private $block_counter = 0;
-
-	/**
 	 * To setup action/filter.
 	 *
 	 * @return void
 	 */
 	protected function setup_hooks() {
-		// Reset counter before content rendering.
-		add_filter( 'the_content', [ $this, 'reset_counter' ], 1 );
-		// Use render_block to inject our frontend attributes securely without regex.
-		add_filter( 'render_block', [ $this, 'inject_frontend_attributes' ], 10, 2 );
+		// Priority 8 ensures this runs before do_blocks.
+		add_filter( 'the_content', [ $this, 'inject_live_edit_ids' ], 8 );
 	}
 
 	/**
-	 * Reset block counter.
+	 * Inject frontend attributes (like data-live-edit-id) dynamically into post content.
 	 *
-	 * @param string $content The content.
-	 * @return string The content.
+	 * @param string $content The post content.
+	 * @return string Modified content.
 	 */
-	public function reset_counter( $content ) {
-		$this->block_counter = 0;
-		return $content;
-	}
-
-	/**
-	 * Inject frontend attributes (like data-live-edit-id) dynamically.
-	 *
-	 * @param string $block_content The block content.
-	 * @param array  $block         The full block, including name and attributes.
-	 *
-	 * @return string Modified block content.
-	 */
-	public function inject_frontend_attributes( $block_content, $block ) {
+	public function inject_live_edit_ids( $content ) {
 		$post_id = get_the_ID();
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return $block_content;
+			return $content;
 		}
 
 		if ( ! is_singular() || ! is_main_query() || get_queried_object_id() !== $post_id ) {
-			return $block_content;
+			return $content;
 		}
 
-		$block_name = $block['blockName'];
+		$blocks  = parse_blocks( $content );
+		$counter = 0;
+		$blocks  = $this->traverse_and_inject_ids( $blocks, $counter );
 
-		// If it's a supported block, we increment the counter and inject.
-		// Wait, all blocks are counted in DFS whether supported or not, so we must increment for EVERY block
-		// if we want the index to match parse_blocks() traversal!
-		// Actually, in the old code `class-rest-api.php`:
-		// `if ( in_array( $block['blockName'], $supported_blocks, true ) ) { ... ++$counter; }`
-		// The old code ONLY incremented the counter for SUPPORTED blocks!
-		// So we must do the same.
+		return serialize_blocks( $blocks );
+	}
 
-		if ( empty( $block_name ) || ! isset( $this->handlers[ $block_name ] ) ) {
-			return $block_content;
+	/**
+	 * Traverse parsed blocks and inject data-live-edit-id.
+	 *
+	 * @param array $blocks  Array of blocks.
+	 * @param int   $counter Reference to the counter.
+	 * @return array Modified blocks array.
+	 */
+	private function traverse_and_inject_ids( $blocks, &$counter ) {
+		foreach ( $blocks as &$block ) {
+			$block_name = $block['blockName'];
+
+			if ( ! empty( $block_name ) && isset( $this->handlers[ $block_name ] ) ) {
+				$handler            = $this->handlers[ $block_name ];
+				$block['innerHTML'] = $handler->inject_frontend_data( $block['innerHTML'], $counter );
+				if ( isset( $block['innerContent'][0] ) && is_string( $block['innerContent'][0] ) ) {
+					$block['innerContent'][0] = $block['innerHTML'];
+				}
+				++$counter;
+			}
+
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				$block['innerBlocks'] = $this->traverse_and_inject_ids( $block['innerBlocks'], $counter );
+			}
 		}
 
-		$handler          = $this->handlers[ $block_name ];
-		$modified_content = $handler->inject_frontend_data( $block_content, $this->block_counter );
-
-		++$this->block_counter;
-
-		return $modified_content;
+		return $blocks;
 	}
 
 	/**

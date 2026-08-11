@@ -10,6 +10,7 @@
  * Internal dependencies
  */
 import '../css/main.scss';
+import blockRegistry from './block-registry';
 
 /**
  * Class representing the Live Edit frontend manager.
@@ -98,20 +99,19 @@ class LiveEdit {
 		const titleEl = document.querySelector(
 			'.wp-block-post-title, .entry-title'
 		);
+		const blocks = Array.from(this.getBlocks());
+		const allElements = [...blocks];
+
 		if (titleEl) {
-			titleEl.setAttribute('contenteditable', 'plaintext-only');
-			titleEl.classList.add('live-edit__block');
-			titleEl.dataset.liveEditField = 'title';
-			titleEl.addEventListener('input', this.handleInput);
-			titleEl.addEventListener('click', this.preventNav);
+			allElements.push(titleEl);
 		}
 
-		const blocks = this.getBlocks();
-		blocks.forEach((block) => {
-			block.setAttribute('contenteditable', 'true');
-			block.classList.add('live-edit__block');
-			block.addEventListener('input', this.handleInput);
-			block.addEventListener('click', this.preventNav);
+		allElements.forEach((element) => {
+			const handler = blockRegistry.getHandlerFor(element);
+			if (handler) {
+				handler.enable(element, this.dirtyBlocks);
+				element._liveEditHandler = handler;
+			}
 		});
 	}
 
@@ -122,53 +122,20 @@ class LiveEdit {
 		const titleEl = document.querySelector(
 			'.wp-block-post-title, .entry-title'
 		);
+		const blocks = Array.from(this.getBlocks());
+		const allElements = [...blocks];
+
 		if (titleEl) {
-			titleEl.removeAttribute('contenteditable');
-			titleEl.classList.remove('live-edit__block');
-			titleEl.removeEventListener('input', this.handleInput);
-			titleEl.removeEventListener('click', this.preventNav);
+			allElements.push(titleEl);
 		}
 
-		const blocks = this.getBlocks();
-		blocks.forEach((block) => {
-			block.removeAttribute('contenteditable');
-			block.classList.remove('live-edit__block');
-			block.removeEventListener('input', this.handleInput);
-			block.removeEventListener('click', this.preventNav);
+		allElements.forEach((element) => {
+			if (element._liveEditHandler) {
+				element._liveEditHandler.disable(element);
+				delete element._liveEditHandler;
+			}
 		});
 	}
-
-	/**
-	 * Handle content input.
-	 *
-	 * @param {Event} e
-	 */
-	handleInput = (e) => {
-		const block = e.currentTarget;
-		if (block.dataset.liveEditField === 'title') {
-			this.dirtyBlocks.set('title', {
-				field: 'title',
-				textContent: block.innerText,
-			});
-		} else {
-			const index = block.dataset.liveEditId;
-			this.dirtyBlocks.set(index, {
-				blockIndex: parseInt(index, 10),
-				textContent: block.innerHTML,
-			});
-		}
-	};
-
-	/**
-	 * Prevent navigation on links inside editable blocks.
-	 *
-	 * @param {Event} e
-	 */
-	preventNav = (e) => {
-		if (e.target.closest('a')) {
-			e.preventDefault();
-		}
-	};
 
 	/**
 	 * Display a toast notification.

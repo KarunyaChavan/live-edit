@@ -111,10 +111,22 @@ class Text_Block_Handler implements Block_Handler_Interface {
 					$element->removeChild( $element->firstChild );
 				}
 
-				// Create a document fragment with the new sanitized HTML.
-				$fragment = $dom->createDocumentFragment();
-				$fragment->appendXML( $sanitized_html );
-				$element->appendChild( $fragment );
+				// Safely parse the new HTML using loadHTML instead of appendXML to avoid strict XML entity errors (like &nbsp;).
+				$temp_dom           = new \DOMDocument();
+				$temp_dom->encoding = 'UTF-8';
+				$temp_state         = libxml_use_internal_errors( true );
+				$temp_dom->loadHTML( '<?xml encoding="UTF-8"><div>' . $sanitized_html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD );
+				libxml_clear_errors();
+				libxml_use_internal_errors( $temp_state );
+
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Built-in DOMDocument property.
+				if ( $temp_dom->documentElement ) {
+					// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- Built-in DOMDocument property.
+					foreach ( $temp_dom->documentElement->childNodes as $node ) {
+						$imported_node = $dom->importNode( $node, true );
+						$element->appendChild( $imported_node );
+					}
+				}
 
 				// Save HTML, stripping the wrapper div.
 				$new_html = '';

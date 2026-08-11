@@ -237,35 +237,39 @@ class LiveEdit {
 		let hasError = false;
 
 		try {
+			const blocksToUpdate = [];
 			for (const [, value] of this.dirtyBlocks.entries()) {
-				const payload = {
-					post_id: data.postId,
+				const blockData = {
 					text_content: value.textContent,
 				};
 
 				if (value.field) {
-					payload.field = value.field;
+					blockData.field = value.field;
 				} else {
-					payload.block_index = value.blockIndex;
+					blockData.block_index = value.blockIndex;
 				}
-
-				try {
-					const response = await fetch(data.restUrl, {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json',
-							'X-WP-Nonce': data.nonce,
-						},
-						body: JSON.stringify(payload),
-					});
-
-					if (!response.ok) {
-						hasError = true;
-					}
-				} catch {
-					hasError = true;
-				}
+				blocksToUpdate.push(blockData);
 			}
+
+			const payload = {
+				post_id: data.postId,
+				blocks: blocksToUpdate,
+			};
+
+			const response = await fetch(data.restUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-WP-Nonce': data.nonce,
+				},
+				body: JSON.stringify(payload),
+			});
+
+			if (!response.ok) {
+				hasError = true;
+			}
+		} catch {
+			hasError = true;
 		} finally {
 			saveLink.textContent = originalText;
 			saveLink.style.pointerEvents = 'auto';

@@ -38,68 +38,6 @@ class Rest_API {
 	 */
 	protected function setup_hooks() {
 		add_action( 'rest_api_init', [ $this, 'register_routes' ] );
-		// Priority 8 ensures this runs before do_blocks.
-		add_filter( 'the_content', [ $this, 'inject_live_edit_ids' ], 8 );
-	}
-
-	/**
-	 * Inject data-live-edit-id attributes into supported blocks for frontend syncing.
-	 *
-	 * @param string $content The post content.
-	 * @return string Modified content.
-	 */
-	public function inject_live_edit_ids( $content ) {
-		$post_id = get_the_ID();
-		// Only inject if the user has edit capabilities for this specific post.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return $content;
-		}
-
-		// Only inject on the main singular query so block indexes stay aligned with the save-side traversal.
-		if ( ! is_singular() || ! is_main_query() || get_queried_object_id() !== $post_id ) {
-			return $content;
-		}
-
-		$blocks  = parse_blocks( $content );
-		$counter = 0;
-		$blocks  = $this->traverse_and_inject_ids( $blocks, $counter );
-
-		return serialize_blocks( $blocks );
-	}
-
-	/**
-	 * Traverse parsed blocks and inject data-live-edit-id.
-	 *
-	 * @param array $blocks  Array of blocks.
-	 * @param int   $counter Reference to the counter.
-	 * @return array Modified blocks array.
-	 */
-	private function traverse_and_inject_ids( $blocks, &$counter ) {
-		$supported_blocks = [ 'core/paragraph', 'core/heading' ];
-
-		foreach ( $blocks as &$block ) {
-			if ( in_array( $block['blockName'], $supported_blocks, true ) ) {
-				$html = trim( $block['innerHTML'] );
-
-				// Split the opening tag into tag name (group 1) and the rest of the
-				// attributes up to the closing ">" (group 2), so the live edit ID can
-				// be inserted directly after the tag name. Anchored at ^ so only the
-				// first tag of the block is ever matched.
-				if ( preg_match( '/^(<[a-zA-Z0-9]+)([^>]*>)/', $html, $matches ) ) {
-					$block['innerHTML'] = $matches[1] . ' data-live-edit-id="' . $counter . '"' . $matches[2] . substr( $html, strlen( $matches[0] ) );
-					if ( isset( $block['innerContent'][0] ) && is_string( $block['innerContent'][0] ) ) {
-						$block['innerContent'][0] = $block['innerHTML'];
-					}
-				}
-				++$counter;
-			}
-
-			if ( ! empty( $block['innerBlocks'] ) ) {
-				$block['innerBlocks'] = $this->traverse_and_inject_ids( $block['innerBlocks'], $counter );
-			}
-		}
-
-		return $blocks;
 	}
 
 	/**
@@ -233,9 +171,9 @@ class Rest_API {
 				continue;
 			}
 
-			// Traverse and update the target block.
+			// Traverse and update the target block via Block Manager.
 			$counter = 0;
-			$updated = $this->traverse_and_update_block( $parsed_blocks, $block_index, $text_content, $counter );
+			$updated = Block_Manager::get_instance()->traverse_and_update_block( $parsed_blocks, $block_index, $block_data, $counter );
 
 			if ( true === $updated ) {
 				$content_updated = true;
@@ -274,67 +212,5 @@ class Rest_API {
 				'message' => __( 'Blocks updated successfully.', 'live-edit' ),
 			]
 		);
-	}
-
-	/**
-	 * Traverse blocks depth-first to find and update the n-th editable block safely.
-	 *
-	 * @param array  $blocks       Array of parsed blocks.
-	 * @param int    $target_index The block index to find.
-	 * @param string $new_text     The new text content (which may contain HTML).
-	 * @param int    $counter      Current block counter (passed by reference).
-	 *
-	 * @return bool|string True if updated, false if not found, 'invalid_format' if match fails.
-	 */
-	private function traverse_and_update_block( &$blocks, $target_index, $new_text, &$counter ) {
-		$supported_blocks = [ 'core/paragraph', 'core/heading' ];
-
-		foreach ( $blocks as &$block ) {
-			if ( in_array( $block['blockName'], $supported_blocks, true ) ) {
-				if ( $counter === $target_index ) {
-					$html = trim( $block['innerHTML'] );
-
-					// Extract the whole opening tag ("<p class="x">") into one group so
-					// it can be rebuilt verbatim around the new content. The greedy
-					// [^>]* stops at the first ">", which avoids lazy matching that
-					// could consume into nested block content on a failed match.
-					if ( preg_match( '/^(<[a-zA-Z0-9]+[^>]*>)/', $html, $matches ) ) {
-						$open_tag = $matches[1];
-
-						// Capture the tag name ("<p ..." → "p") so the matching closing
-						// tag ("</p>") can be reconstructed for the updated innerHTML.
-						preg_match( '/^<([a-zA-Z0-9]+)/', $open_tag, $tag_match );
-						$tag_name  = $tag_match[1];
-						$close_tag = "</{$tag_name}>";
-
-						// Sanitize the HTML content safely using wp_kses_post to preserve allowed inline tags.
-						$sanitized_html = wp_kses_post( $new_text );
-
-						$block['innerHTML'] = $open_tag . $sanitized_html . $close_tag;
-					} else {
-						// False success guard: if it didn't match the regex, we couldn't edit it.
-						return 'invalid_format';
-					}
-
-					// Update innerContent to match innerHTML for correct serialization.
-					if ( isset( $block['innerContent'][0] ) && is_string( $block['innerContent'][0] ) ) {
-						$block['innerContent'][0] = $block['innerHTML'];
-					}
-
-					return true;
-				}
-				++$counter;
-			}
-
-			// Traverse inner blocks (depth-first).
-			if ( ! empty( $block['innerBlocks'] ) ) {
-				$result = $this->traverse_and_update_block( $block['innerBlocks'], $target_index, $new_text, $counter );
-				if ( true === $result || 'invalid_format' === $result ) {
-					return $result;
-				}
-			}
-		}
-
-		return false;
 	}
 }

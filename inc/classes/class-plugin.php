@@ -32,6 +32,7 @@ class Plugin {
 		Rewrite::get_instance();
 		SEO::get_instance();
 		Admin_Bar::get_instance();
+		Block_Manager::get_instance();
 		Rest_API::get_instance();
 	}
 }

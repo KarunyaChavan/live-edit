@@ -6,6 +6,8 @@
  */
 import TextHandler from './handlers/text-handler';
 import TitleHandler from './handlers/title-handler';
+import ImageHandler from './handlers/image-handler';
+import VideoHandler from './handlers/video-handler';
 
 class BlockRegistry {
 	constructor() {
@@ -18,6 +20,8 @@ class BlockRegistry {
 	 */
 	registerDefaultHandlers() {
 		this.register(new TitleHandler());
+		this.register(new ImageHandler());
+		this.register(new VideoHandler());
 		this.register(new TextHandler());
 	}
 

@@ -206,14 +206,17 @@ class LiveEdit {
 		try {
 			const blocksToUpdate = [];
 			for (const [, value] of this.dirtyBlocks.entries()) {
-				const blockData = {
-					text_content: value.textContent,
-				};
+				const blockData = {};
 
 				if (value.field) {
 					blockData.field = value.field;
+					blockData.content = value.content;
 				} else {
 					blockData.block_index = value.blockIndex;
+					blockData.block_name = value.blockName;
+					blockData.operation = value.operation;
+					blockData.content = value.content;
+					blockData.attributes = value.attributes;
 				}
 				blocksToUpdate.push(blockData);
 			}

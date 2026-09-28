@@ -70,7 +70,9 @@ export default class TextHandler {
 		const index = element.dataset.liveEditId;
 		dirtyBlocks.set(index, {
 			blockIndex: parseInt(index, 10),
-			textContent: element.innerHTML,
+			blockName: element.dataset.liveEditBlock,
+			operation: 'update_content',
+			content: element.innerHTML,
 		});
 	}
 

@@ -27,14 +27,36 @@ class Text_Block_Handler implements Block_Handler_Interface {
 	}
 
 	/**
+	 * Validate an incoming text update.
+	 *
+	 * @param array $block        The parsed block array.
+	 * @param array $payload_data The data received from the REST API.
+	 *
+	 * @return true|\WP_Error True when valid, otherwise an error.
+	 */
+	public function validate_update( $block, $payload_data ) {
+		if ( 'update_content' !== ( $payload_data['operation'] ?? '' ) || ! isset( $payload_data['content'] ) || ! is_string( $payload_data['content'] ) ) {
+			return new \WP_Error(
+				'invalid_block_update',
+				__( 'A valid text content update is required.', 'live-edit' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Inject frontend attributes (like data-live-edit-id).
 	 *
 	 * @param string $block_content The HTML content of the block.
 	 * @param int    $block_id      The unique ID for the live edit instance.
+	 * @param string $block_name    The registered block name.
+	 * @param array  $block_attrs   The parsed block attributes.
 	 *
 	 * @return string Modified block HTML.
 	 */
-	public function inject_frontend_data( $block_content, $block_id ) {
+	public function inject_frontend_data( $block_content, $block_id, $block_name, $block_attrs = [] ) {
 		if ( ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
 			return $block_content;
 		}
@@ -44,6 +66,7 @@ class Text_Block_Handler implements Block_Handler_Interface {
 		if ( $tags->next_tag() ) {
 			$tags->set_attribute( 'data-live-edit-id', (string) $block_id );
 			$tags->set_attribute( 'data-live-edit-type', 'text' );
+			$tags->set_attribute( 'data-live-edit-block', $block_name );
 			return $tags->get_updated_html();
 		}
 
@@ -59,7 +82,7 @@ class Text_Block_Handler implements Block_Handler_Interface {
 	 * @return array The updated block array.
 	 */
 	public function update_block( $block, $payload_data ) {
-		$text_content = isset( $payload_data['text_content'] ) ? $payload_data['text_content'] : '';
+		$text_content = isset( $payload_data['content'] ) ? $payload_data['content'] : '';
 
 		if ( ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
 			return $block;

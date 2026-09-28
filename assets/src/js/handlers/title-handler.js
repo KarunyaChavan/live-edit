@@ -71,7 +71,7 @@ export default class TitleHandler {
 	handleInput(element, dirtyBlocks) {
 		dirtyBlocks.set('title', {
 			field: 'title',
-			textContent: element.innerText,
+			content: element.innerText,
 		});
 	}
 

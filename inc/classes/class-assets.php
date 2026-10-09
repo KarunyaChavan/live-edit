@@ -56,6 +56,8 @@ class Assets {
 			return;
 		}
 
+		wp_enqueue_media();
+
 		wp_register_script(
 			'live-edit-script',
 			LIVE_EDIT_URL . '/assets/build/js/main.js',
@@ -82,6 +84,12 @@ class Assets {
 				'restUrl' => esc_url_raw( rest_url( 'live-edit/v1/update-block' ) ),
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
 				'postId'  => $post_id,
+				'strings' => [
+					'selectImage' => __( 'Select image', 'live-edit' ),
+					'useImage'    => __( 'Use image', 'live-edit' ),
+					'selectVideo' => __( 'Select video', 'live-edit' ),
+					'useVideo'    => __( 'Use video', 'live-edit' ),
+				],
 			]
 		);
 	}

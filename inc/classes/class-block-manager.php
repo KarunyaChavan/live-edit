@@ -10,7 +10,9 @@
 namespace Live_Edit\Inc;
 
 use Live_Edit\Inc\Traits\Singleton;
+use Live_Edit\Inc\Block_Handlers\Image_Block_Handler;
 use Live_Edit\Inc\Block_Handlers\Text_Block_Handler;
+use Live_Edit\Inc\Block_Handlers\Video_Block_Handler;
 
 // Exit if accessed directly.
 defined( 'ABSPATH' ) || exit;
@@ -45,7 +47,8 @@ class Block_Manager {
 	private function register_handlers() {
 		$handlers = [
 			new Text_Block_Handler(),
-			// New handlers (e.g. Media_Block_Handler) can be added here in the future.
+			new Image_Block_Handler(),
+			new Video_Block_Handler(),
 		];
 
 		foreach ( $handlers as $handler ) {
@@ -101,7 +104,7 @@ class Block_Manager {
 
 			if ( ! empty( $block_name ) && isset( $this->handlers[ $block_name ] ) ) {
 				$handler            = $this->handlers[ $block_name ];
-				$block['innerHTML'] = $handler->inject_frontend_data( $block['innerHTML'], $counter );
+				$block['innerHTML'] = $handler->inject_frontend_data( $block['innerHTML'], $counter, $block_name, $block['attrs'] ?? [] );
 				if ( isset( $block['innerContent'][0] ) && is_string( $block['innerContent'][0] ) ) {
 					$block['innerContent'][0] = $block['innerHTML'];
 				}
@@ -124,7 +127,7 @@ class Block_Manager {
 	 * @param array $payload_data Incoming payload data.
 	 * @param int   $counter      Current counter.
 	 *
-	 * @return bool True if updated, false if not found.
+	 * @return bool|\WP_Error True if updated, false if not found, or an error.
 	 */
 	public function traverse_and_update_block( &$blocks, $target_index, $payload_data, &$counter ) {
 		foreach ( $blocks as &$block ) {
@@ -132,8 +135,22 @@ class Block_Manager {
 
 			if ( ! empty( $block_name ) && isset( $this->handlers[ $block_name ] ) ) {
 				if ( $counter === $target_index ) {
+					if ( isset( $payload_data['block_name'] ) && $block_name !== $payload_data['block_name'] ) {
+						return new \WP_Error(
+							'block_mismatch',
+							__( 'The requested block no longer matches the page content.', 'live-edit' ),
+							[ 'status' => 409 ]
+						);
+					}
+
 					$handler = $this->handlers[ $block_name ];
-					$block   = $handler->update_block( $block, $payload_data );
+					$valid   = $handler->validate_update( $block, $payload_data );
+
+					if ( is_wp_error( $valid ) ) {
+						return $valid;
+					}
+
+					$block = $handler->update_block( $block, $payload_data );
 					return true;
 				}
 				++$counter;

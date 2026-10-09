@@ -26,14 +26,26 @@ interface Block_Handler_Interface {
 	public function get_supported_blocks();
 
 	/**
+	 * Validate an incoming block update.
+	 *
+	 * @param array $block        The parsed block array.
+	 * @param array $payload_data The data received from the REST API.
+	 *
+	 * @return true|\WP_Error True when valid, otherwise an error.
+	 */
+	public function validate_update( $block, $payload_data );
+
+	/**
 	 * Inject frontend attributes (like data-live-edit-id).
 	 *
 	 * @param string $block_content The HTML content of the block.
 	 * @param int    $block_id      The unique ID for the live edit instance.
+	 * @param string $block_name    The registered block name.
+	 * @param array  $block_attrs   The parsed block attributes.
 	 *
 	 * @return string Modified block HTML.
 	 */
-	public function inject_frontend_data( $block_content, $block_id );
+	public function inject_frontend_data( $block_content, $block_id, $block_name, $block_attrs = [] );
 
 	/**
 	 * Update the block with new data.

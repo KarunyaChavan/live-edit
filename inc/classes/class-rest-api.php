@@ -65,16 +65,28 @@ class Rest_API {
 						'items'    => [
 							'type'       => 'object',
 							'properties' => [
-								'block_index'  => [
+								'block_index' => [
 									'type'              => 'integer',
 									'sanitize_callback' => 'absint',
 								],
-								'field'        => [
+								'block_name'  => [
+									'type'              => 'string',
+									'sanitize_callback' => 'sanitize_key',
+								],
+								'operation'   => [
+									'type' => 'string',
+									'enum' => [ 'update_content', 'update_attributes' ],
+								],
+								'content'     => [
+									'type' => 'string',
+								],
+								'attributes'  => [
+									'type'                 => 'object',
+									'additionalProperties' => true,
+								],
+								'field'       => [
 									'type'              => 'string',
 									'sanitize_callback' => 'sanitize_text_field',
-								],
-								'text_content' => [
-									'type' => 'string',
 								],
 							],
 						],
@@ -159,7 +171,7 @@ class Rest_API {
 		foreach ( $blocks as $block_data ) {
 			$field        = isset( $block_data['field'] ) ? $block_data['field'] : null;
 			$block_index  = isset( $block_data['block_index'] ) ? $block_data['block_index'] : null;
-			$text_content = isset( $block_data['text_content'] ) ? $block_data['text_content'] : '';
+			$text_content = isset( $block_data['content'] ) ? $block_data['content'] : '';
 
 			if ( null === $block_index && null === $field ) {
 				continue;
@@ -174,6 +186,10 @@ class Rest_API {
 			// Traverse and update the target block via Block Manager.
 			$counter = 0;
 			$updated = Block_Manager::get_instance()->traverse_and_update_block( $parsed_blocks, $block_index, $block_data, $counter );
+
+			if ( is_wp_error( $updated ) ) {
+				return $updated;
+			}
 
 			if ( $updated ) {
 				$content_updated = true;
